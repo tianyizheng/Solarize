@@ -2,21 +2,14 @@
 import React from "react";
 import {
   StyleSheet,
-  Text,
-  View,
-  AppRegistry,
-  TextInput,
-  Image,
   ScrollView,
-  TouchableHighlight
+  KeyboardAvoidingView,
+  LayoutAnimation,
+  Platform,
+  StyleSheet,
+  UIManager
 } from "react-native";
-import {
-  VictoryBar,
-  VictoryChart,
-  VictoryTheme,
-  VictoryScatter
-} from "victory-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Image, View } from 'react-native-animatable'
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Fumi } from "react-native-textinput-effects";
@@ -75,40 +68,40 @@ export default class Login extends React.Component {
           />
         </View>
         <View style={styles.buttonContainer}>
-        <Button
-          containerViewStyle={{
-            paddingTop: 42
-          }}
-          buttonStyle={{
-            backgroundColor: "white",
-            borderRadius: 10,
-            width: 162
-          }}
-          textStyle={{
-            textAlign: "center",
-            color: "rgb(223, 0, 51)",
-            fontSize: 20
-          }}
-          title={`Log in`}
-          onPress={this._submit}
-        />
-        <Button
-          containerViewStyle={{
-            paddingTop: 42
-          }}
-          buttonStyle={{
-            backgroundColor: "white",
-            borderRadius: 10,
-            width: 162
-          }}
-          textStyle={{
-            textAlign: "center",
-            color: "rgb(223, 0, 51)",
-            fontSize: 20
-          }}
-          title={`Register`}
-        />
-      </View>
+          <Button
+            containerViewStyle={{
+              paddingTop: 42
+            }}
+            buttonStyle={{
+              backgroundColor: "white",
+              borderRadius: 10,
+              width: 162
+            }}
+            textStyle={{
+              textAlign: "center",
+              color: "rgb(223, 0, 51)",
+              fontSize: 20
+            }}
+            title={`Log in`}
+            onPress={this._submit}
+          />
+          <Button
+            containerViewStyle={{
+              paddingTop: 42
+            }}
+            buttonStyle={{
+              backgroundColor: "white",
+              borderRadius: 10,
+              width: 162
+            }}
+            textStyle={{
+              textAlign: "center",
+              color: "rgb(223, 0, 51)",
+              fontSize: 20
+            }}
+            title={`Register`}
+          />
+        </View>
       </ScrollView>
     );
   }
@@ -157,7 +150,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     margin: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-around'
+    flexDirection: "row",
+    justifyContent: "space-around"
   }
 });
