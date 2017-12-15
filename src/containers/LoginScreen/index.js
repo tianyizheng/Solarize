@@ -1,156 +1,123 @@
 /* @flow */
 import React from "react";
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   LayoutAnimation,
   Platform,
-  StyleSheet,
   UIManager
 } from "react-native";
-import { Image, View } from 'react-native-animatable'
-import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Fumi } from "react-native-textinput-effects";
-import { Button } from "react-native-elements";
+import { Image, View } from "react-native-animatable";
 
-export default class Login extends React.Component {
+import imgLogo from "../../img/ComEd.png";
+import metrics from "../../config/metrics";
+
+import Opening from './Opening'
+import LoginForm from './LoginForm'
+
+const IMAGE_WIDTH = metrics.DEVICE_WIDTH * 0.8;
+
+if (Platform.OS === "android")
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+
+export default class LoginScreen extends React.Component {
+  static propTypes = {
+    isLoggedIn: PropTypes.bool.isRequired,
+    isLoading: PropTypes.bool.isRequired,
+    login: PropTypes.func.isRequired,
+    onLoginAnimationCompleted: PropTypes.func.isRequired // Called at the end of a succesfull login/signup animation
+  }
+
   state = {
-    name: "",
-    password: ""
+    visibleForm: null // Can be: null | SIGNUP | LOGIN
+  };
+
+  componentWillUpdate(nextProps) {
+    // If the user has logged/signed up succesfully start the hide animation
+    if (!this.props.isLoggedIn && nextProps.isLoggedIn) {
+      this._hideAuthScreen();
+    }
+  }
+
+  _hideAuthScreen = async () => {
+    // 1. Slide out the form container
+    await this._setVisibleForm(null);
+    // 2. Fade out the logo
+    await this.logoImgRef.fadeOut(800);
+    // 3. Tell the container (app.js) that the animation has completed
+    this.props.onLoginAnimationCompleted();
+  };
+
+  _setVisibleForm = async visibleForm => {
+    // 1. Hide the current form (if any)
+    if (this.state.visibleForm && this.formRef && this.formRef.hideForm) {
+      await this.formRef.hideForm();
+    }
+    // 2. Configure a spring animation for the next step
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    // 3. Set the new visible form
+    this.setState({ visibleForm });
   };
 
   render() {
+    const { isLoggedIn, isLoading, login } = this.props;
+    const { visibleForm } = this.state;
+    // The following style is responsible of the "bounce-up from bottom" animation of the form
+    const formStyle = !visibleForm ? { height: 0 } : { marginTop: 40 };
+
     return (
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.content}
-      >
-        <View style={styles.card1}>
-          <Fumi
-            label={"email@example.com"}
-            labelStyle={{ color: "#a3a3a3" }}
-            inputStyle={{ color: "#f95a25" }}
-            iconClass={MaterialCommunityIcons}
-            iconName={"email-outline"}
-            iconColor={"#f95a25"}
-            onChangeText={name => this.setState({ name })}
-            ref={ref => {
-              this._nameInput = ref;
-            }}
-            autoFocus={true}
-            autoCapitalize="words"
-            autoCorrect={true}
-            keyboardType="default"
-            returnKeyType="next"
-            keyboardType="email-address"
-            onSubmitEditing={this._next}
-            blurOnSubmit={false}
-          />
-          <Fumi
-            style={styles.input}
-            labelStyle={{ color: "#a3a3a3" }}
-            label={"Password"}
-            iconClass={MaterialCommunityIcons}
-            iconName={"lock-outline"}
-            iconColor={"#f95a25"}
-            onChangeText={password => this.setState({ password })}
-            ref={ref => {
-              this._passInput = ref;
-            }}
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="go"
-            onSubmitEditing={this._submit}
-            blurOnSubmit={true}
-            secureTextEntry={true}
-          />
-        </View>
-        <View style={styles.buttonContainer}>
-          <Button
-            containerViewStyle={{
-              paddingTop: 42
-            }}
-            buttonStyle={{
-              backgroundColor: "white",
-              borderRadius: 10,
-              width: 162
-            }}
-            textStyle={{
-              textAlign: "center",
-              color: "rgb(223, 0, 51)",
-              fontSize: 20
-            }}
-            title={`Log in`}
-            onPress={this._submit}
-          />
-          <Button
-            containerViewStyle={{
-              paddingTop: 42
-            }}
-            buttonStyle={{
-              backgroundColor: "white",
-              borderRadius: 10,
-              width: 162
-            }}
-            textStyle={{
-              textAlign: "center",
-              color: "rgb(223, 0, 51)",
-              fontSize: 20
-            }}
-            title={`Register`}
-          />
-        </View>
-      </ScrollView>
+      <View style={styles.container}>
+        <Image
+          animation={"bounceIn"}
+          duration={1200}
+          delay={200}
+          ref={ref => (this.logoImgRef = ref)}
+          style={styles.logoImg}
+          source={imgLogo}
+        />
+        {!visibleForm &&
+          !isLoggedIn && (
+            <Opening
+              onSignInPress={() => this._setVisibleForm("LOGIN")}
+            />
+          )}
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={-100}
+          behavior={"padding"}
+          style={[formStyle, styles.bottom]}
+        >
+          {visibleForm === "LOGIN" && (
+            <LoginForm
+              ref={ref => (this.formRef = ref)}
+              onLoginPress={login}
+              isLoading={isLoading}
+            />
+          )}
+        </KeyboardAvoidingView>
+      </View>
     );
   }
-
-  _next = () => {
-    this._passInput && this._passInput.focus();
-  };
-
-  _submit = () => {
-    if (this.state.name && this.state.password) {
-      alert(
-        `Welcome, ${this.state.name}! Confirmation email has been sent to ${
-          this.state.password
-        }`
-      );
-    } else {
-      alert(`Please enter your email and password.`);
-    }
-  };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
+    width: metrics.DEVICE_WIDTH,
+    height: metrics.DEVICE_HEIGHT,
     paddingTop: 24,
-    backgroundColor: "rgb(223, 0, 51)"
+    backgroundColor: 'white'
   },
-  content: {
-    // not cool but good enough to make all inputs visible when keyboard is active
-    paddingTop: 32,
-    paddingBottom: 300
+  logoImg: {
+    flex: 1,
+    width: IMAGE_WIDTH,
+    alignSelf: 'center',
+    resizeMode: 'contain',
+    marginVertical: 30
   },
-  card1: {
-    padding: 16
-  },
-  input: {
-    marginTop: 16
-  },
-  title: {
-    paddingTop: 24,
-    paddingBottom: 24,
-    textAlign: "center",
-    color: "rgb(235, 221, 45)",
-    fontSize: 30,
-    fontWeight: "bold"
-  },
-  buttonContainer: {
-    margin: 20,
-    flexDirection: "row",
-    justifyContent: "space-around"
+  bottom: {
+    backgroundColor: 'rgb(223, 0, 51)',
   }
-});
+})

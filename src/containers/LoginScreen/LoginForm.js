@@ -1,65 +1,72 @@
-import React, { Component, PropTypes } from 'react'
-import { StyleSheet } from 'react-native'
-import { Text, View } from 'react-native-animatable'
+import React, { Component } from "react";
+import PropTypes from 'prop-types';
+import { StyleSheet, Platform } from "react-native";
+import { Text, View } from "react-native-animatable";
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Fumi } from "react-native-textinput-effects";
 import { Button } from "react-native-elements";
 
-import metrics from '../../config/metrics'
+import metrics from "../../config/metrics";
+import HomeScreen from '../HomeScreen'
+
+const IS_ANDROID = Platform.OS === "android";
 
 export default class LoginForm extends Component {
   static propTypes = {
     isLoading: PropTypes.bool.isRequired,
-    onLoginPress: PropTypes.func.isRequired,
+    onLoginPress: PropTypes.func.isRequired
   }
 
   state = {
-    email: '',
-    password: ''
-  }
+    email: "",
+    password: ""
+  };
 
   hideForm = async () => {
     if (this.buttonRef && this.formRef) {
       await Promise.all([
         this.buttonRef.zoomOut(200),
-        this.formRef.fadeOut(300),
-      ])
+        this.formRef.fadeOut(300)
+      ]);
     }
-  }
+  };
 
   _next = () => {
     this._passInput && this._passInput.focus();
   };
 
   _submit = () => {
-    if (this.state.name && this.state.password) {
-      alert(
-        `Welcome, ${this.state.name}! Confirmation email has been sent to ${
-          this.state.password
-        }`
-      );
+    if (this.state.email && this.state.password) {
+      console.log(this.state.email);
+      this.props.onLoginPress(this.state.email, this.state.password);
     } else {
       alert(`Please enter your email and password.`);
     }
   };
 
-  render () {
-    const { email, password } = this.state
-    const { isLoading, onLoginPress } = this.props
+  render() {
+    const { email, password } = this.state;
+    const { isLoading, onLoginPress } = this.props;
     return (
       <View style={styles.container}>
-        <View style={styles.form} ref={(ref) => { this.formRef = ref }}>
+        <View
+          style={styles.form}
+          ref={ref => {
+            this.formRef = ref;
+          }}
+        >
           <Fumi
+            style={styles.FumiContainer}
             label={"email@example.com"}
-            labelStyle={{ color: "#a3a3a3" }}
-            inputStyle={{ color: "#f95a25" }}
+            labelStyle={[styles.FumiWrapper, { color: "#a3a3a3" }]}
+            inputStyle={[styles.textInput, { color: "rgb(223, 0, 51)" }]}
             iconClass={MaterialCommunityIcons}
             iconName={"email-outline"}
-            iconColor={"#f95a25"}
-            onChangeText={name => this.setState({ name })}
+            iconColor={"rgb(223, 0, 51)"}
+            onChangeText={email => this.setState({ email })}
             ref={ref => {
-              this._nameInput = ref;
+              this._emailInput = ref;
             }}
             autoFocus={true}
             autoCapitalize="words"
@@ -71,12 +78,13 @@ export default class LoginForm extends Component {
             blurOnSubmit={false}
           />
           <Fumi
-            style={styles.input}
-            labelStyle={{ color: "#a3a3a3" }}
+            style={styles.FumiContainer}
+            labelStyle={[styles.FumiWrapper, { color: "#a3a3a3" }]}
             label={"Password"}
+            inputStyle={[styles.textInput, { color: "rgb(223, 0, 51)" }]}
             iconClass={MaterialCommunityIcons}
             iconName={"lock-outline"}
-            iconColor={"#f95a25"}
+            iconColor={"rgb(223, 0, 51)"}
             onChangeText={password => this.setState({ password })}
             ref={ref => {
               this._passInput = ref;
@@ -90,12 +98,14 @@ export default class LoginForm extends Component {
           />
         </View>
         <View style={styles.footer}>
-          <View ref={(ref) => this.buttonRef = ref} animation={'bounceIn'} duration={600} delay={400}>
+          <View
+            ref={ref => (this.buttonRef = ref)}
+            animation={"bounceIn"}
+            duration={600}
+            delay={400}
+          >
             <Button
-              buttonStyle={{
-                backgroundColor: "white",
-                borderRadius: 10
-              }}
+              buttonStyle={styles.button}
               textStyle={{
                 textAlign: "center",
                 color: "rgb(223, 0, 51)",
@@ -105,17 +115,18 @@ export default class LoginForm extends Component {
               onPress={this._submit}
             />
             <Text
-            style={styles.signupLink}
-            animation={'fadeIn'}
-            duration={600}
-            delay={400}
+              style={styles.signupLink}
+              animation={"fadeIn"}
+              duration={600}
+              delay={400}
             >
-            {'Not registered yet?'}
-          </Text>
+              {"Not registered yet?"}
+            </Text>
           </View>
         </View>
       </View>
-    )
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -127,11 +138,38 @@ const styles = StyleSheet.create({
   },
   footer: {
     height: 100,
-    justifyContent: 'center'
+    justifyContent: "center"
+  },
+  button: {
+    height: 42,
+    width: 300,
+    borderWidth: 1,
+    borderRadius: 3,
+    alignSelf: "center",
+    justifyContent: "center",
+    borderColor: "rgba(0, 0, 0, 0.1)",
+    backgroundColor: "white"
   },
   signupLink: {
-    color: 'rgba(255,255,255,0.6)',
-    alignSelf: 'center',
+    color: "white",
+    alignSelf: "center",
     padding: 20
+  },
+  FumiContainer: {
+    marginTop: 2,
+    marginBottom: 10,
+    height: 62
+  },
+  FumiWrapper: {
+    height: 42,
+    marginBottom: 2,
+    height: 62
+  },
+  textInput: {
+    flex: 1,
+    color: "white",
+    margin: IS_ANDROID ? -1 : 0,
+    height: 48,
+    padding: 7
   }
-})
+});

@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native'
 import { Text, View } from 'react-native-animatable'
 import { Button } from "react-native-elements";
@@ -16,9 +17,8 @@ export default class Opening extends Component {
         <View animation={'zoomIn'} delay={600} duration={400}>
           <Button
             buttonStyle={styles.createAccountButton}
-            textStyle={styles.signInButtonText}
+            textStyle={styles.createAccountButtonText}
             title={`Create Account`}
-            onPress={}
           />
         </View>
         <View style={styles.separatorContainer} animation={'zoomIn'} delay={700} duration={400}>
@@ -46,7 +46,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   createAccountButton: {
-    backgroundColor: '#9B9FA4'
+    backgroundColor: '#9B9FA4',
+    borderRadius: 3,
+    height: 42,
+    width: 300,
+    borderWidth: 1,
+    borderRadius: 3,
+    alignSelf: "center",
+    justifyContent: "center",
+    borderColor: "rgba(0, 0, 0, 0.1)",
   },
   createAccountButtonText: {
     color: 'white'
@@ -67,7 +75,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 8
   },
   signInButton: {
-    backgroundColor: 'rgb(223, 0, 51)'
+    backgroundColor: 'rgb(223, 0, 51)',
+    borderRadius: 3,
+    height: 42,
+    width: 300,
+    borderWidth: 1,
+    borderRadius: 3,
+    alignSelf: "center",
+    justifyContent: "center",
+    borderColor: "rgba(0, 0, 0, 0.1)",
   },
   signInButtonText: {
     color: 'white'
