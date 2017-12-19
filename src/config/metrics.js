@@ -1,3 +1,4 @@
+//@flow
 import { Dimensions, Platform } from 'react-native'
 
 const IS_ANDROID = Platform.OS === 'android'

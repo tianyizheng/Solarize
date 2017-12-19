@@ -30,6 +30,8 @@
     "react-native-elements": "^0.18.5",
     "react-native-svg": "5.5.1",
     "react-native-textinput-effects": "^0.4.2",
+    "react-native-typography": "^1.1.0",
+    "react-navigation": "^1.0.0-beta.21",
     "victory-native": "~0.15.0"
   }
 }

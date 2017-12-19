@@ -1,4 +1,4 @@
-/* @flow */
+//@flow
 import React from "react";
 import PropTypes from 'prop-types';
 import {
@@ -9,7 +9,8 @@ import {
   Platform,
   UIManager
 } from "react-native";
-import { Image, View } from "react-native-animatable";
+import { Image, View, Text } from "react-native-animatable";
+import { human } from 'react-native-typography';
 
 import imgLogo from "../../img/ComEd.png";
 import metrics from "../../config/metrics";
@@ -45,7 +46,10 @@ export default class LoginScreen extends React.Component {
     // 1. Slide out the form container
     await this._setVisibleForm(null);
     // 2. Fade out the logo
-    await this.logoImgRef.fadeOut(800);
+    await Promise.all([
+      this.logoImgRef.fadeOut(800),
+      this.textRef.fadeOut(200)
+    ]);
     // 3. Tell the container (app.js) that the animation has completed
     this.props.onLoginAnimationCompleted();
   };
@@ -77,6 +81,17 @@ export default class LoginScreen extends React.Component {
           style={styles.logoImg}
           source={imgLogo}
         />
+        <View style={{justifyContent: 'center'}}>
+          <Text
+            style={[human.title2, styles.text]}
+            animation={"fadeIn"}
+            duration={1200}
+            delay={200}
+            ref={ref => (this.textRef = ref)}
+          >
+            Your Solar Energy Portal
+          </Text>
+        </View>
         {!visibleForm &&
           !isLoggedIn && (
             <Opening
@@ -119,5 +134,9 @@ const styles = StyleSheet.create({
   },
   bottom: {
     backgroundColor: 'rgb(223, 0, 51)',
+  },
+  text: {
+    color: "rgb(223, 0, 51)",
+    alignSelf: "center"
   }
 })

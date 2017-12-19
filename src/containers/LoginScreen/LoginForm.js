@@ -1,5 +1,6 @@
+//@flow
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { StyleSheet, Platform } from "react-native";
 import { Text, View } from "react-native-animatable";
 import FontAwesomeIcon from "@expo/vector-icons/FontAwesome";
@@ -8,7 +9,7 @@ import { Fumi } from "react-native-textinput-effects";
 import { Button } from "react-native-elements";
 
 import metrics from "../../config/metrics";
-import HomeScreen from '../HomeScreen'
+import HomeScreen from "../HomeScreen/HomeScreen";
 
 const IS_ANDROID = Platform.OS === "android";
 
@@ -16,7 +17,7 @@ export default class LoginForm extends Component {
   static propTypes = {
     isLoading: PropTypes.bool.isRequired,
     onLoginPress: PropTypes.func.isRequired
-  }
+  };
 
   state = {
     email: "",
